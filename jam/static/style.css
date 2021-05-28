@@ -3,6 +3,11 @@ html {
     font-family: "IM Fell French Canon SC";
 }
 
+.welcome {
+    display: flex;
+    justify-content: center;
+}
+
 .cards {
     display: flex;
     justify-content: center;

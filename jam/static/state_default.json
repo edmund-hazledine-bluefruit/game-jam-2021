@@ -1,27 +1,228 @@
 {
-    "cards": [
-        {
-            "id": 1,
-            "name": "Orange",
-            "description": "This is a short description",
-            "image": "orange.jpg"
-        },
-        {
-            "id": 2,
-            "name": "Apple",
-            "description": "This is a short description",
-            "image": "apple.jpg"
-        }
-    ],
     "player1": {
-        "name": "",
-        "hand": [],
-        "deck": []
+        "hand": [
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            }
+        ],
+        "deck": 0,
+        "discard": 0,
+        "score": 0
     },
     "player2": {
-        "name": "",
-        "hand": [],
-        "deck": []
+        "hand": [
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            }
+        ],
+        "deck": 0,
+        "discard": 0,
+        "score": 0
     },
-    "gameStarted": false
+    "buyArea": [
+        {
+            "amount": 10,
+            "card": {
+                "id": 1,
+                "name": "Orange",
+                "image": "orange.jpg",
+                "description": "But it's not orange! :o (Special: Draw card - if card is blue, play it)",
+                "blue": true,
+                "special": true,
+                "effects": {
+                    "attack": 0,
+                    "actions": 1,
+                    "cards": 1
+                }
+            }
+        },
+        {
+            "amount": 10,
+            "card": {
+                "id": 2,
+                "name": "Apple",
+                "image": "apple.jpg",
+                "description": "It's just an apple.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 1,
+                    "actions": 1,
+                    "cards": 1
+                }
+            }
+        },
+        {
+            "amount": 10,
+            "card": {
+                "id": 3,
+                "name": "Banana",
+                "image": "banana.jpg",
+                "description": "This is not a gun.",
+                "blue": true,
+                "special": false,
+                "effects": {
+                    "attack": 2,
+                    "actions": 0,
+                    "cards": 1
+                }
+            }
+        },
+        {
+            "amount": 10,
+            "card": {
+                "id": 4,
+                "name": "Melon",
+                "image": "melon.jpg",
+                "description": "Throw this for maximum effect.",
+                "blue": true,
+                "special": false,
+                "effects": {
+                    "attack": 3,
+                    "actions": 0,
+                    "cards": 0
+                }
+            }
+        },
+        {
+            "amount": 10,
+            "card": {
+                "id": 5,
+                "name": "Lime",
+                "image": "lime.jpg",
+                "description": "An evil sour lime. Make someone else bite it. (Special: Play alongisde a blue card - Adds +1 (or +2 randomly?) to a random effect)",
+                "blue": false,
+                "special": true,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            }
+        }
+    ]
 }

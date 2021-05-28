@@ -2,10 +2,12 @@
 
 {% block content %}
 <div>
-    <p>Enter your name:</p>
     <form action="{{ url_for('start_game') }}" method="POST">
-        <input type="text" id="name" name="name">
-        <input type="submit" value="Get jamming">
+        <div>
+            <label>Enter your name:</label>
+            <input type="text" id="name" name="name">
+        </div>
+        <input class="jamming" type="submit" value="Get jamming">
     </form>
 </div>
 {% endblock %}
