@@ -1,5 +1,6 @@
 {
-    "player1": {
+    "playerTurn": true,
+    "player": {
         "hand": [
             {
                 "id": 6,
@@ -71,81 +72,15 @@
         "discard": 0,
         "score": 0
     },
-    "player2": {
-        "hand": [
-            {
-                "id": 6,
-                "name": "Rotten Fruit",
-                "image": "rotten.jpg",
-                "description": "Ugh, stinky.",
-                "blue": false,
-                "special": false,
-                "effects": {
-                    "attack": 0,
-                    "actions": 0,
-                    "cards": 0
-                }
-            },
-            {
-                "id": 6,
-                "name": "Rotten Fruit",
-                "image": "rotten.jpg",
-                "description": "Ugh, stinky.",
-                "blue": false,
-                "special": false,
-                "effects": {
-                    "attack": 0,
-                    "actions": 0,
-                    "cards": 0
-                }
-            },
-            {
-                "id": 6,
-                "name": "Rotten Fruit",
-                "image": "rotten.jpg",
-                "description": "Ugh, stinky.",
-                "blue": false,
-                "special": false,
-                "effects": {
-                    "attack": 0,
-                    "actions": 0,
-                    "cards": 0
-                }
-            },
-            {
-                "id": 6,
-                "name": "Rotten Fruit",
-                "image": "rotten.jpg",
-                "description": "Ugh, stinky.",
-                "blue": false,
-                "special": false,
-                "effects": {
-                    "attack": 0,
-                    "actions": 0,
-                    "cards": 0
-                }
-            },
-            {
-                "id": 6,
-                "name": "Rotten Fruit",
-                "image": "rotten.jpg",
-                "description": "Ugh, stinky.",
-                "blue": false,
-                "special": false,
-                "effects": {
-                    "attack": 0,
-                    "actions": 0,
-                    "cards": 0
-                }
-            }
-        ],
+    "opponent": {
+        "hand": 5,
         "deck": 0,
         "discard": 0,
         "score": 0
     },
     "buyArea": [
         {
-            "amount": 0,
+            "amount": 10,
             "card": {
                 "id": 1,
                 "name": "Orange",
