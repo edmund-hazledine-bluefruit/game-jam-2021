@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="cards">
+    {% for card in cards %}
+    <div class="card">
+        <p class="card_title">{{ card.name }}</p>
+
+        <img class="card_image" src="/static/images/{{ card.image }}">
+
+        <p class="card_text">{{ card.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<br>
+
+<form action="/reset_game" method="post">
+    <button class="reset" script="{{ url_for('reset_game') }}" type="submit">Reset</button>
+</form>
+{% endblock %}

@@ -1,0 +1,27 @@
+{
+    "cards": [
+        {
+            "id": 1,
+            "name": "Orange",
+            "description": "This is a short description",
+            "image": "orange.jpg"
+        },
+        {
+            "id": 2,
+            "name": "Apple",
+            "description": "This is a short description",
+            "image": "apple.jpg"
+        }
+    ],
+    "player1": {
+        "name": "",
+        "hand": [],
+        "deck": []
+    },
+    "player2": {
+        "name": "",
+        "hand": [],
+        "deck": []
+    },
+    "gameStarted": false
+}
