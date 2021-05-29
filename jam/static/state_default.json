@@ -1,6 +1,6 @@
 {
-    "playerTurn": true,
-    "player": {
+    "playerOneTurn": true,
+    "playerOne": {
         "hand": [
             {
                 "id": 6,
@@ -68,14 +68,80 @@
                 }
             }
         ],
-        "deck": 0,
-        "discard": 0,
+        "deck": [],
+        "discard": [],
         "score": 0
     },
-    "opponent": {
-        "hand": 5,
-        "deck": 0,
-        "discard": 0,
+    "playerTwo": {
+        "hand": [
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            },
+            {
+                "id": 6,
+                "name": "Rotten Fruit",
+                "image": "rotten.jpg",
+                "description": "Ugh, stinky.",
+                "blue": false,
+                "special": false,
+                "effects": {
+                    "attack": 0,
+                    "actions": 0,
+                    "cards": 0
+                }
+            }
+        ],
+        "deck": [],
+        "discard": [],
         "score": 0
     },
     "buyArea": [

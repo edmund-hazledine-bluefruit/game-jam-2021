@@ -14,6 +14,21 @@
   <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
   <script>
+    const gameId = document.cookie.match(new RegExp('(^| )gameId=([^;]+)'))[2]
+    const player = document.cookie.match(new RegExp('(^| )player=([^;]+)'))[2]
+    const baseaddress = (location.host + location.pathname).replace("/play", "")
+    const args = "?gameId=" + gameId + "&player=" + player
+    const socket = new WebSocket("ws://"+baseaddress+"/gamesocket"+args);
+
+    socket.onmessage = function (event) {
+        let msg = JSON.parse(event.data)
+        if (msg.error) {
+            window.location.href = "/welcome";
+        }
+
+        updateGameState (msg)
+    }
+
     function updateGameState (event) { // event is json
       var source = document.getElementById('entry-template').innerHTML;
       var template = Handlebars.compile(source);
@@ -27,6 +42,7 @@
 
     function useCard(id) {
         // send action:
+        socket.send("foo")
         // player uses card
         // player actions -1 
         // player actions += any on card
@@ -34,6 +50,7 @@
     }
 
     function buyCard(id) {
+        socket.send("foo")
         // send action:
         // player buys card
         // turn ends

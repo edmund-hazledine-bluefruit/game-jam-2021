@@ -12,13 +12,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon+SC&display=swap" rel="stylesheet">
   <script>
-      function getJamming() {
-          event.preventDefault();
-          let name = document.getElementById("name").value
-          let socket = new WebSocket("ws://localhost:8080/wait-for-table?name=" + name);
-          document.getElementById("waiting").style.display = "block";
-          document.getElementById("jamming").disabled = true;
-      }
+    function getJamming() {
+      event.preventDefault();
+      let name = document.getElementById("name").value
+      let socket = new WebSocket("ws://" + location.host + "/wait-for-table?name=" + name);
+      document.getElementById("waiting").style.display = "block";
+      document.getElementById("jamming").disabled = true;
+    }
+
+    function joinGame(id) {
+      event.preventDefault();
+      document.cookie="gameId=" + id;
+      document.cookie="player=2";
+      window.location.href = "/play";
+    }
   </script>
 </head>
 
@@ -42,7 +49,7 @@
         <div class="game-list">
             {{range .Games}}
             {{if .Name}}
-            <form action="/game/{{.Id}}/" method="GET">
+            <form onsubmit="joinGame({{.Id}})" method="GET">
                 <input type="hidden" name="user-id" value="2">
                 <p class="table-name">{{.Name}}</p>
                 <input class="join-button" type="submit" value="Join Game">

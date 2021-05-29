@@ -1,23 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	var err error
-	gameStateJson, err := ioutil.ReadFile("static/state_default.json")
-	var gameState GameState
-	json.Unmarshal([]byte(gameStateJson), &gameState)
-	if err != nil {
-		fmt.Println("File reading error", err)
-		return
-	}
-
 	fmt.Println("Starting Server...")
 
 	router := gin.Default()
@@ -27,7 +16,8 @@ func main() {
 
 	router.GET("/welcome", handleWelcome)
 	router.GET("/wait-for-table", waitForTable)
-	router.GET("/game/:game-id", handleGame)
+	router.GET("/play", createGame)
+	router.GET("/gamesocket", gameSock)
 
 	router.Run()
 }

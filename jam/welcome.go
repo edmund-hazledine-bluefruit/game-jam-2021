@@ -14,6 +14,16 @@ type game struct {
 	Id   string `json:"id"`
 }
 
+type Table struct {
+	Id   uuid.UUID
+	Name string
+	Conn *websocket.Conn
+}
+
+var tables map[uuid.UUID]Table = make(map[uuid.UUID]Table)
+
+var upgrader = websocket.Upgrader{}
+
 func handleWelcome(c *gin.Context) {
 	games := make([]game, len(tables))
 	for _, t := range tables {
@@ -31,8 +41,6 @@ func handleWelcome(c *gin.Context) {
 		},
 	)
 }
-
-var upgrader = websocket.Upgrader{}
 
 func waitForTable(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)

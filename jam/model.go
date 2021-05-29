@@ -1,43 +1,45 @@
 package main
 
 import (
-	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
+	_ "embed"
 )
 
-var tables map[uuid.UUID]Table = make(map[uuid.UUID]Table)
-var gameStateJson string
+//go:embed static/state_default.json
+var gameStateJson []byte
 
-type Game struct {
-	Value int
-	Tag   string `json:"label"`
-}
-
-type Table struct {
-	Id   uuid.UUID
-	Name string
-	Conn *websocket.Conn
-}
-
-type GameState struct {
+type PlayerStateView struct {
 	PlayerTurn bool         `json:"playerTurn"`
-	Player     Player       `json:"player"`
-	Opponent   Opponent     `json:"opponent"`
+	Player     PlayerInfo   `json:"player"`
+	Opponent   OpponentInfo `json:"opponent"`
 	BuyArea    []SupplyPile `json:"buyArea"`
 }
 
-type Player struct {
+type PlayerInfo struct {
 	Hand    []Card `json:"hand"`
-	Desk    int    `json:"deck"`
+	Deck    int    `json:"deck"`
 	Discard int    `json:"discard"`
 	Score   int    `json:"score"`
 }
 
-type Opponent struct {
+type OpponentInfo struct {
 	Hand    int `json:"hand"`
 	Deck    int `json:"deck"`
 	Discard int `json:"discard"`
 	Score   int `json:"score"`
+}
+
+type GameState struct {
+	PlayerOneTurn bool         `json:"playerOneTurn"`
+	PlayerOne     Player       `json:"playerOne"`
+	PlayerTwo     Player       `json:"playerTwo"`
+	BuyArea       []SupplyPile `json:"buyArea"`
+}
+
+type Player struct {
+	Hand    []Card `json:"hand"`
+	Deck    []Card `json:"deck"`
+	Discard []Card `json:"discard"`
+	Score   int    `json:"score"`
 }
 
 type SupplyPile struct {
@@ -59,4 +61,36 @@ type Effects struct {
 	Attack  int `json:"attack"`
 	Actions int `json:"actions"`
 	Cards   int `json:"cards"`
+}
+
+func (g *GameState) getPlayerInfo(player string) PlayerStateView {
+	p := g.PlayerOne
+	o := g.PlayerTwo
+	turn := g.PlayerOneTurn
+	if player == "2" {
+		p = g.PlayerTwo
+		o = g.PlayerOne
+		turn = !turn
+	}
+
+	playerInfo := PlayerInfo{
+		Hand:    p.Hand,
+		Deck:    len(p.Deck),
+		Discard: len(p.Discard),
+		Score:   p.Score,
+	}
+
+	opponentInfo := OpponentInfo{
+		Hand:    len(o.Hand),
+		Deck:    len(o.Deck),
+		Discard: len(o.Discard),
+		Score:   o.Score,
+	}
+
+	return PlayerStateView{
+		PlayerTurn: turn,
+		Player:     playerInfo,
+		Opponent:   opponentInfo,
+		BuyArea:    g.BuyArea,
+	}
 }
