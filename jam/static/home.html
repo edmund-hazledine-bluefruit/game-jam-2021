@@ -16,6 +16,19 @@
   <script>
     var state = {
       "playerTurn": true,
+      "lastPlayed": {
+        "id": 6,
+        "name": "Rotten Fruit",
+        "image": "rotten.jpg",
+        "description": "Ugh, stinky.",
+        "blue": false,
+        "special": false,
+        "effects": {
+          "attack": 0,
+          "actions": 0,
+          "cards": 0
+        }
+      },
       "player": {
         "hand": [
           {
@@ -84,8 +97,9 @@
             }
           }
         ],
-        "deck": 0,
-        "discard": 0,
+        "actions": 3,
+        "deck": 3,
+        "discard": 7,
         "score": 0
       },
       "opponent": {
@@ -96,7 +110,7 @@
       },
       "buyArea": [
         {
-          "amount": 10,
+          "amount": 9,
           "card": {
             "id": 1,
             "name": "Orange",
@@ -144,7 +158,7 @@
           }
         },
         {
-          "amount": 10,
+          "amount": 0,
           "card": {
             "id": 4,
             "name": "Melon",
@@ -178,58 +192,180 @@
       ]
     }
 
+
     window.onload = function (event) { // event is json
       var source = document.getElementById('entry-template').innerHTML;
       var template = Handlebars.compile(source);
       var html = template(state);
       document.getElementById('content').innerHTML = html;
+
+      document.getElementById('end-actions').onclick = () => {
+        // send an action -> player actions to 0
+      };
     };
+
+    function useCard(id) {
+        // send action:
+        // player uses card
+        // player actions -1 
+        // player actions += any on card
+        // other player score - attack on card
+    }
+
+    function buyCard(id) {
+        // send action:
+        // player buys card
+        // turn ends
+        // card amount -1
+    }
   </script>
 </head>
 
 <script id="entry-template" type="text/x-handlebars-template">
-  <div class="opponent">
-    <h3>Opponent</h3>
-    <div class="opponent_deck card_back">
-      <img class="card_back_image" src="https://www.bluefruit.co.uk/content/uploads/2019/06/BLUE_Circuit-Banner2.svg"  />
-      <h3>Deck</h3>
-      <div class="card_amount">
-        {{opponent.deck}}
+  <div class="top-row">
+    <div class="top-left">
+      <div class="opponent">
+        <h3>Opponent</h3>
+        <div class="opponent_deck card_back">
+          <img class="card_back_image" src="https://www.bluefruit.co.uk/content/uploads/2019/06/BLUE_Circuit-Banner2.svg"  />
+          <h3>Deck</h3>
+          <div class="card_amount">
+            {{opponent.deck}}
+          </div>
+        </div>
+        <div class="opponent_deck card_back">
+          <img class="card_back_image" src="https://www.bluefruit.co.uk/content/uploads/2019/06/BLUE_Circuit-Banner2.svg"  />
+          <h3>Hand</h3>
+          <div class="card_amount">
+            {{opponent.hand}}
+          </div>
+        </div>
       </div>
+
+      {{#if lastPlayed}}
+      <div class="card">
+        <p class="card_title">{{lastPlayed.name}}</p>
+
+        <img class="card_image fancy-border {{#if lastPlayed.blue}}blue_image{{/if}}" src="/static/images/{{lastPlayed.image}}">
+
+        <p class="card_text">{{lastPlayed.description}}</p>
+
+        <div class="card_effects">
+          <div>
+            ⚔️{{lastPlayed.effects.attack}}
+          </div>
+          <div>
+            ▶️{{lastPlayed.effects.actions}}
+          </div>
+          <div>
+            🃏{{lastPlayed.effects.cards}}
+          </div>
+        </div>
+      </div>
+      {{/if}}
     </div>
-    {{#each opponent.hand}}
-    <div class="opponent_hand card_back">
-      <img class="card_back_image" src="https://www.bluefruit.co.uk/content/uploads/2019/06/BLUE_Circuit-Banner2.svg"  />
+
+    <div class="top-left">
+    <div class="cards">
+      <h3>Buys</h3>
+      {{#each buyArea}}
+      {{#if amount}}
+      {{#if ../playerTurn}}
+      {{#unless ../player.actions}}
+      <div class="card card_select" onclick="buyCard({{card.id}})">
+      {{else}}
+      <div class="card">
+      {{/unless}}
+      {{/if}}
+        <div class="card_amount">
+          {{amount}}
+        </div>
+        <p class="card_title">{{card.name}}</p>
+
+        <img class="card_image fancy-border {{#if card.blue}}blue_image{{/if}}" src="/static/images/{{card.image}}">
+
+        <p class="card_text">{{card.description}}</p>
+
+        <div class="card_effects">
+          <div>
+            ⚔️{{card.effects.attack}}
+          </div>
+          <div>
+            ▶️{{card.effects.actions}}
+          </div>
+          <div>
+            🃏{{card.effects.cards}}
+          </div>
+        </div>
+      </div>
+      {{else}}
+      <div class="card card_empty">
+        <div class="card_amount">
+          {{amount}}
+        </div>
+        <h1 class="card_empty_cross">⤬</h1>
+        
+        <p>Empty Pile</p>
+        
+      </div>  
+      {{/if}}
+      {{/each}}
     </div>
-    {{/each}}
+    <div class="info">
+      {{#if playerTurn}}
+      {{#if player.actions}}
+      Your turn! You have <span class="number">{{player.actions}}</span> action(s).
+      {{else}}
+      Your turn! You have <span class="number">1</span> buy.
+      {{/if}}
+      {{else}}
+      Wait your turn...
+      {{/if}}
+    </div>
+    </div>
   </div>
 
-  <div class="cards">
-    <h3>Buys</h3>
-    {{#each buyArea}}
-    <div class="card">
-      <div class="card_amount">
-        {{amount}}
-      </div>
-      <p class="card_title">{{card.name}}</p>
 
-      <img class="card_image fancy-border" src="/static/images/{{card.image}}">
+  <div class="cards player">
+        <h3>You</h3>
+        <div class="opponent_deck card_back">
+          <img class="card_back_image" src="https://www.bluefruit.co.uk/content/uploads/2019/06/BLUE_Circuit-Banner2.svg"  />
+          <h3>Deck</h3>
+          <div class="card_amount">
+            {{player.deck}}
+          </div>
+        </div>
+        <div class="opponent_deck card_back">
+          <img class="card_back_image" src="https://www.bluefruit.co.uk/content/uploads/2019/06/BLUE_Circuit-Banner2.svg"  />
+          <h3>Discard</h3>
+          <div class="card_amount">
+            {{player.discard}}
+          </div>
+        </div>
+        {{#each player.hand}}
+        {{#if ../playerTurn}}
+        {{#if ../player.actions}}
+        <div class="card card_select" onclick="useCard({{card.id}})">
+        {{else}}
+        <div class="card">
+        {{/if}}
+        {{/if}}
+          <p class="card_title">{{name}}</p>
 
-      <p class="card_text">{{card.description}}</p>
+          <img class="card_image fancy-border" src="/static/images/{{image}}">
 
-      <div class="card_effects">
-        <div>
-          ⚔️{{card.effects.attack}}
+          <p class="card_text">{{description}}</p>
+
+          <div class="card_effects">
+            <div>⚔️{{effects.attack}}</div>
+            <div>▶️{{effects.actions}}</div>
+            <div>🃏{{effects.cards}}</div>
+          </div>
         </div>
+        {{/each}}
         <div>
-         ▶️{{card.effects.actions}}
+          <button id="end-actions" class="end-actions">End actions</button>
         </div>
-        <div>
-         🃏{{card.effects.cards}}
-        </div>
-      </div>
-    </div>
-    {{/each}}
   </div>
 </script>
 
