@@ -16,7 +16,6 @@ type game struct {
 
 func handleWelcome(c *gin.Context) {
 	games := make([]game, len(tables))
-	fmt.Println(len(games))
 	for _, t := range tables {
 		games = append(games, game{
 			Name: t.Name,
@@ -39,7 +38,7 @@ func waitForTable(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	tableName := c.Request.URL.Query().Get("name")
 	if tableName == "" {
-		fmt.Println("BAILING")
+		fmt.Println("Invalid table name")
 		conn.Close()
 	}
 

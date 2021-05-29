@@ -17,8 +17,8 @@ func main() {
 	router.LoadHTMLGlob("templates/*")
 
 	router.GET("/welcome", handleWelcome)
-
 	router.GET("/wait-for-table", waitForTable)
+	router.GET("/game/:game-id", handleGame)
 
 	router.Run()
 }

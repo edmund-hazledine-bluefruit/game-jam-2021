@@ -36,7 +36,8 @@
     <div>
         {{range .Games}}
         {{if .Name}}
-        <form action="/game/{{.Id}}?userId=2">
+        <form action="/game/{{.Id}}/" method="GET">
+            <input type="hidden" name="user-id" value="2">
             <p>{{.Name}}</p>
             <input class="join-button" type="submit" value="Join Game">
         </form>
