@@ -16,33 +16,40 @@
           event.preventDefault();
           let name = document.getElementById("name").value
           let socket = new WebSocket("ws://localhost:8080/wait-for-table?name=" + name);
-          document.getElementById("waiting").style.visibility = "visible";
+          document.getElementById("waiting").style.display = "block";
           document.getElementById("jamming").disabled = true;
       }
   </script>
 </head>
 
-<body>
-    <div>
-        <form onsubmit="getJamming()">
-            <div>
-                <label>Enter the table name:</label>
-                <input type="text" id="name" name="name">
-            </div>
-            <p id="waiting" style="visibility: hidden;">Waiting for Opponent...<p>
-            <input class="jamming" id="jamming" type="submit" value="Get jamming">
-        </form>
-    </div>
-    <div>
-        {{range .Games}}
-        {{if .Name}}
-        <form action="/game/{{.Id}}/" method="GET">
-            <input type="hidden" name="user-id" value="2">
-            <p>{{.Name}}</p>
-            <input class="join-button" type="submit" value="Join Game">
-        </form>
+<body class="container">
+    <h1>Jackfruit: the Game</h1>
+    <div class="welcome_box">
+        <div>
+            <form onsubmit="getJamming()">
+                <div class="table-name">
+                    <label>Enter a table name:</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <br>
+                <input class="jamming" id="jamming" type="submit" value="Get jamming">
+                <p id="waiting" class="waiting">Waiting for Opponent...<p>
+            </form>
+        </div>
+        {{if .Games}}
+        <h3>Tables to join:</h3>
         {{end}}
-        {{end}}
+        <div class="game-list">
+            {{range .Games}}
+            {{if .Name}}
+            <form action="/game/{{.Id}}/" method="GET">
+                <input type="hidden" name="user-id" value="2">
+                <p class="table-name">{{.Name}}</p>
+                <input class="join-button" type="submit" value="Join Game">
+            </form>
+            {{end}}
+            {{end}}
+        </div>
     </div>
 </body>
 </html>
