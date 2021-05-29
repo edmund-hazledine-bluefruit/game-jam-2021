@@ -10,7 +10,7 @@ func main() {
 	fmt.Println("Starting Server...")
 
 	router := gin.Default()
-	router.StaticFile("/", "./templates/home.html")
+	router.StaticFile("/", "./static/home.html")
 	router.Static("/static", "./static/")
 	router.LoadHTMLGlob("templates/*")
 
