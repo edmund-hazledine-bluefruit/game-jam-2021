@@ -1,13 +1,32 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<div>
-    <form action="{{ url_for('start_game') }}" method="POST">
-        <div>
-            <label>Enter your name:</label>
-            <input type="text" id="name" name="name">
-        </div>
-        <input class="jamming" type="submit" value="Get jamming">
-    </form>
-</div>
-{% endblock %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="JAM">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>JAM</title>
+
+  <link rel="stylesheet" href="../static/style.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon+SC&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div>
+        <form action="/start_game" method="POST">
+            <div>
+                <label>Enter your name:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            <input class="jamming" type="submit" value="Get jamming">
+        </form>
+    </div>
+    <div>
+        {{range .Games}}
+        <p> {{.Name}}<p/>
+        {{end}}
+    </div>
+</body>
+</html>
