@@ -2,7 +2,7 @@ from jam import app
 from os import path
 import json
 
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, send_from_directory
 
 BASE_PATH = path.dirname(path.realpath(__file__))
 STATE_DEFAULT_PATH = path.join(BASE_PATH, "static", "state_default.json")
@@ -10,14 +10,7 @@ STATE_PATH = path.join(BASE_PATH, "static", "state.json")
 
 @app.route('/', methods=['GET'])
 def index():
-    with open(STATE_PATH, 'r') as fin:
-        data = json.load(fin)
-        started = data['gameStarted']
-        cards = data['cards']
-    
-    if not started:
-        return render_template("welcome.html")
-    return render_template("home.html", cards=cards)
+    return send_from_directory("templates", "home.html")
 
 @app.route('/start_game', methods=['POST'])
 def start_game():

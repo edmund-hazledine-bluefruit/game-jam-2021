@@ -1,36 +1,221 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block script %}
-<script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="JAM">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>JAM</title>
+
+  <link rel="stylesheet" href="../static/style.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon+SC&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+
+  <script>
     var state = {
-
+      "playerTurn": true,
+      "player": {
+        "hand": [
+          {
+            "id": 6,
+            "name": "Rotten Fruit",
+            "image": "rotten.jpg",
+            "description": "Ugh, stinky.",
+            "blue": false,
+            "special": false,
+            "effects": {
+              "attack": 0,
+              "actions": 0,
+              "cards": 0
+            }
+          },
+          {
+            "id": 6,
+            "name": "Rotten Fruit",
+            "image": "rotten.jpg",
+            "description": "Ugh, stinky.",
+            "blue": false,
+            "special": false,
+            "effects": {
+              "attack": 0,
+              "actions": 0,
+              "cards": 0
+            }
+          },
+          {
+            "id": 6,
+            "name": "Rotten Fruit",
+            "image": "rotten.jpg",
+            "description": "Ugh, stinky.",
+            "blue": false,
+            "special": false,
+            "effects": {
+              "attack": 0,
+              "actions": 0,
+              "cards": 0
+            }
+          },
+          {
+            "id": 6,
+            "name": "Rotten Fruit",
+            "image": "rotten.jpg",
+            "description": "Ugh, stinky.",
+            "blue": false,
+            "special": false,
+            "effects": {
+              "attack": 0,
+              "actions": 0,
+              "cards": 0
+            }
+          },
+          {
+            "id": 6,
+            "name": "Rotten Fruit",
+            "image": "rotten.jpg",
+            "description": "Ugh, stinky.",
+            "blue": false,
+            "special": false,
+            "effects": {
+              "attack": 0,
+              "actions": 0,
+              "cards": 0
+            }
+          }
+        ],
+        "deck": 0,
+        "discard": 0,
+        "score": 0
+      },
+      "opponent": {
+        "hand": 5,
+        "deck": 0,
+        "discard": 0,
+        "score": 0
+      },
+      "buyArea": [
+        {
+          "amount": 10,
+          "card": {
+            "id": 1,
+            "name": "Orange",
+            "image": "orange.jpg",
+            "description": "But it's not orange! :o (Special: Draw card - if card is blue, play it)",
+            "blue": true,
+            "special": true,
+            "effects": {
+              "attack": 0,
+              "actions": 1,
+              "cards": 1
+            }
+          }
+        },
+        {
+          "amount": 10,
+          "card": {
+            "id": 2,
+            "name": "Apple",
+            "image": "apple.jpg",
+            "description": "It's just an apple.",
+            "blue": false,
+            "special": false,
+            "effects": {
+              "attack": 1,
+              "actions": 1,
+              "cards": 1
+            }
+          }
+        },
+        {
+          "amount": 10,
+          "card": {
+            "id": 3,
+            "name": "Banana",
+            "image": "banana.jpg",
+            "description": "This is not a gun.",
+            "blue": true,
+            "special": false,
+            "effects": {
+              "attack": 2,
+              "actions": 0,
+              "cards": 1
+            }
+          }
+        },
+        {
+          "amount": 10,
+          "card": {
+            "id": 4,
+            "name": "Melon",
+            "image": "melon.jpg",
+            "description": "Throw this for maximum effect.",
+            "blue": true,
+            "special": false,
+            "effects": {
+              "attack": 3,
+              "actions": 0,
+              "cards": 0
+            }
+          }
+        },
+        {
+          "amount": 10,
+          "card": {
+            "id": 5,
+            "name": "Lime",
+            "image": "lime.jpg",
+            "description": "An evil sour lime. (Special: Play alongisde a blue card - Adds +1 (or +2 randomly?) to a random effect)",
+            "blue": false,
+            "special": true,
+            "effects": {
+              "attack": 0,
+              "actions": 0,
+              "cards": 0
+            }
+          }
+        }
+      ]
     }
-    function begin(event) {
-        
-        // event is json
+
+    window.onload = function (event) { // event is json
+      var source = document.getElementById('entry-template').innerHTML;
+      var template = Handlebars.compile(source);
+      var html = template(state);
+      document.getElementById('content').innerHTML = html;
     };
-    begin(jsonData);
-</script>
-{% endblock %}
+  </script>
+</head>
 
-
-{% block content %}
-
-<div class="cards">
-    {% for card in cards %}
+<script id="entry-template" type="text/x-handlebars-template">
+  <div class="cards">
+    {{#each buyArea}}
     <div class="card">
-        <p class="card_title">{{ card.name }}</p>
+      <p class="card_title">{{card.name}}</p>
 
-        <img class="card_image" src="/static/images/{{ card.image }}">
+      <img class="card_image" src="/static/images/{{card.image}}">
 
-        <p class="card_text">{{ card.description }}</p>
+      <p class="card_text">{{card.description}}</p>
+
+      <div class="card_effects">
+        <div class="card_effect">
+          ⚔️{{card.effects.attack}}
+        </div>
+        <div class="card_effect">
+         ▶️{{card.effects.actions}}
+        </div>
+        <div class="card_effect">
+         🃏{{card.effects.cards}}
+        </div>
+      </div>
     </div>
-    {% endfor %}
-</div>
+    {{/each}}
+  </div>
+</script>
 
-<br>
+<body>
+  <div id="content">
+  </div>
+</body>
 
-<form action="/reset_game" method="post">
-    <button class="reset" script="{{ url_for('reset_game') }}" type="submit">Reset</button>
-</form>
-{% endblock %}
+</html>
