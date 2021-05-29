@@ -13,6 +13,16 @@ html {
     color: blue;
 }
 
+.opponent {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.opponent > div {
+    margin: 6px;
+}
+
 .cards {
     display: flex;
     justify-content: center;
@@ -30,9 +40,45 @@ html {
     min-width: 148px;
     width: 148px;
     height: 250px;
-    border: 10px black solid;
+    border: 10px #333 solid;
     border-radius: 10px;
     box-shadow: 3px 3px 6px ;
+}
+
+.card_back {
+    display: flex;
+    flex-direction: column;
+    background-color: #4d354d;
+    position: relative;
+    text-align: center;
+    min-width: 80px;
+    width: 80px;
+    height: 120px;
+    border: 10px #333 solid;
+    border-radius: 10px;
+    box-shadow: 3px 3px 6px ;
+}
+
+.card_back > h3 {
+    color: white;
+}
+
+.card_back_image {
+    margin-top: 10%;
+}
+
+.card_amount {
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    background-color: red;
+    position: absolute;
+    top: -15px;
+    right: -15px;
 }
 
 .card_title {
@@ -47,11 +93,26 @@ html {
 
 .card_image {
     padding-top: 5px;
-    width: 100%;
-    height: 80px;
-    object-fit: cover;
+    width: 93%;
+    height: 70px;
+    min-height: 70px;
+    max-height: 70px;
+    object-fit: contain;
     background-color: white;
 }
+
+.fancy-border {
+    border-image-slice:84 136 77 135;
+    border-image-width:20px 0 20px 0;
+    border-image-outset:0 0px 4px 0px;
+    border-image-repeat:stretch stretch;
+    border-image-source:url("https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Decorative-Elements-PNG/Wooden_Frame_Border_PNG_Clipart.png?m=1559095285");
+    
+    /* Without this the border will not show */
+    border-style: solid;
+    border-width: 5px;
+}
+
 
 .card_text {
     display: flex;
@@ -69,12 +130,8 @@ html {
     background-color: wheat;
     margin: 0;
     padding-bottom: 5px;
-    bottom: 0px;
     display: flex;
     justify-content: space-evenly;
-}
-
-.card_effect {
 }
 
 .reset {

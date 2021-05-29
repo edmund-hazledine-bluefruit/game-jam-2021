@@ -10,7 +10,7 @@ STATE_PATH = path.join(BASE_PATH, "static", "state.json")
 
 @app.route('/', methods=['GET'])
 def index():
-    return send_from_directory("templates", "home.html")
+    return send_from_directory("static", "home.html")
 
 @app.route('/start_game', methods=['POST'])
 def start_game():
