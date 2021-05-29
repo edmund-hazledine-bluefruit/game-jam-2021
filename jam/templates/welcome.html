@@ -11,21 +11,36 @@
   <link rel="stylesheet" href="../static/style.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon+SC&display=swap" rel="stylesheet">
+  <script>
+      function getJamming() {
+          event.preventDefault();
+          let name = document.getElementById("name").value
+          let socket = new WebSocket("ws://localhost:8080/wait-for-table?name=" + name);
+          document.getElementById("waiting").style.visibility = "visible";
+          document.getElementById("jamming").disabled = true;
+      }
+  </script>
 </head>
 
 <body>
     <div>
-        <form action="/start_game" method="POST">
+        <form onsubmit="getJamming()">
             <div>
-                <label>Enter your name:</label>
+                <label>Enter the table name:</label>
                 <input type="text" id="name" name="name">
             </div>
-            <input class="jamming" type="submit" value="Get jamming">
+            <p id="waiting" style="visibility: hidden;">Waiting for Opponent...<p>
+            <input class="jamming" id="jamming" type="submit" value="Get jamming">
         </form>
     </div>
     <div>
         {{range .Games}}
-        <p> {{.Name}}<p/>
+        {{if .Name}}
+        <form action="/game/{{.Id}}?userId=2">
+            <p>{{.Name}}</p>
+            <input class="join-button" type="submit" value="Join Game">
+        </form>
+        {{end}}
         {{end}}
     </div>
 </body>
