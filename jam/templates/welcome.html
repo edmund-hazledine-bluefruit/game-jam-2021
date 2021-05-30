@@ -16,14 +16,19 @@
       event.preventDefault();
       let name = document.getElementById("name").value
       let socket = new WebSocket("ws://" + location.host + "/wait-for-table?name=" + name);
+      socket.onmessage = function (event) {
+        let msg = JSON.parse(event.data)
+        gameId = msg.gameId
+        if (gameId) joinGame(gameId, "1")
+      }
       document.getElementById("waiting").style.display = "block";
       document.getElementById("jamming").disabled = true;
     }
 
-    function joinGame(id) {
+    function joinGame(id, player) {
       event.preventDefault();
       document.cookie="gameId=" + id;
-      document.cookie="player=2";
+      document.cookie="player=" + player;
       window.location.href = "/play";
     }
   </script>
@@ -49,8 +54,7 @@
         <div class="game-list">
             {{range .Games}}
             {{if .Name}}
-            <form onsubmit="joinGame({{.Id}})" method="GET">
-                <input type="hidden" name="user-id" value="2">
+            <form onsubmit='joinGame({{.Id}}, "2")' method="GET">
                 <p class="table-name">{{.Name}}</p>
                 <input class="join-button" type="submit" value="Join Game">
             </form>

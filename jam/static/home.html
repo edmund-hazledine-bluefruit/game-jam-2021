@@ -42,7 +42,13 @@
 
     function useCard(id) {
         // send action:
-        socket.send("foo")
+        socket.send(
+          `{
+              "actionType": 0,
+              "cardId": ${id},
+              "usedWith": -1
+          }`)
+
         // player uses card
         // player actions -1 
         // player actions += any on card
@@ -50,7 +56,13 @@
     }
 
     function buyCard(id) {
-        socket.send("foo")
+        socket.send(
+          `{
+              "actionType": 1,
+              "cardId": ${id},
+              "usedWith": -1
+          }`)
+
         // send action:
         // player buys card
         // turn ends

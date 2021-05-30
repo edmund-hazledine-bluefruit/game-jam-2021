@@ -66,7 +66,6 @@ func waitForTable(c *gin.Context) {
 	for {
 		_, _, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println("Connection dropped!!!", err)
 			conn.Close()
 			delete(tables, table.Id)
 			break

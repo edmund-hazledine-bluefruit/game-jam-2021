@@ -9,49 +9,146 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type Game struct {
-	Id   uuid.UUID
-	Game GameState
+type Action struct {
+	ActionType int `json:"actionType"`
+	CardId     int `json:"cardId"`
+	UsedWith   int `json:"usedWith"`
 }
 
-var games map[uuid.UUID]Game = make(map[uuid.UUID]Game)
+type Game struct {
+	Id            uuid.UUID
+	GameState     GameState
+	PlayerOneConn *websocket.Conn
+	PlayerTwoConn *websocket.Conn
+}
+
+var games map[uuid.UUID]*Game = make(map[uuid.UUID]*Game)
+
+func (game *Game) processAction(action Action, playerId string) {
+	var player *Player
+	//var opponent *Player
+
+	if playerId == "1" {
+		player = &game.GameState.PlayerOne
+		//opponent = &game.GameState.PlayerTwo
+	} else {
+		player = &game.GameState.PlayerTwo
+		//opponent = &game.GameState.PlayerOne
+	}
+
+	switch action.ActionType {
+	case 0: // Use Card
+		fmt.Println("Used card")
+	case 1: // Buy Card
+		buyCard(action.CardId, player, &game.GameState)
+	}
+
+	playerOneInfo := game.GameState.getPlayerInfo("1")
+	playerTwoInfo := game.GameState.getPlayerInfo("2")
+	playerOneMsg, _ := json.Marshal(playerOneInfo)
+	playerTwoMsg, _ := json.Marshal(playerTwoInfo)
+
+	game.PlayerOneConn.WriteMessage(websocket.TextMessage, playerOneMsg)
+	game.PlayerTwoConn.WriteMessage(websocket.TextMessage, playerTwoMsg)
+}
+
+func buyCard(cardId int, player *Player, gameState *GameState) {
+	for i, supplyPile := range gameState.BuyArea {
+		if supplyPile.Card.Id == cardId {
+			player.Discard = append(player.Discard, supplyPile.Card)
+			gameState.BuyArea[i].Amount--
+			break
+		}
+	}
+}
 
 func createGame(c *gin.Context) {
-	//gameId, _ := uuid.Parse(c.Param("game-id"))
-	//player := c.Request.URL.Query().Get("user-id")
-	//_, gotTable := tables[gameId]
-
-	//if !gotTable || (player != "1" && player != "2") {
-	//	c.Redirect(http.StatusMovedPermanently, "/welcome")
-	//	return
-	//}
-
 	c.File("static/home.html")
+}
+
+func getGame(gameId uuid.UUID) (game *Game) {
+	currentGame, gotGame := games[gameId]
+	if gotGame {
+		return currentGame
+	}
+
+	var gameState GameState
+	json.Unmarshal(gameStateJson, &gameState)
+	newGame := Game{
+		Id:        gameId,
+		GameState: gameState,
+	}
+	games[newGame.Id] = &newGame
+
+	return &newGame
 }
 
 func gameSock(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		fmt.Println("Failed to set websocket upgrade: %+v", err)
+		fmt.Println("Failed to upgrade connection")
+		return
+	}
+	game, player, err := setupGameConnection(conn, c)
+	if err != nil {
+		conn.WriteMessage(websocket.TextMessage, []byte(`{"error":true}`))
 		return
 	}
 
-	var gameState GameState
-	json.Unmarshal(gameStateJson, &gameState)
-	r := gameState.getPlayerInfo("1")
-	out, _ := json.Marshal(r)
+	playerInfo := game.GameState.getPlayerInfo(player)
+	out, _ := json.Marshal(playerInfo)
+
 	conn.WriteMessage(websocket.TextMessage, out)
-	//tableName := c.Request.URL.Query().Get("name")
 
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println("Connection dropped!!!", err)
-			conn.Close()
-			//delete(tables, table.Id)
+			closeConnections(game)
 			break
 		}
-		fmt.Println(msg)
-		conn.WriteMessage(websocket.TextMessage, out)
+		var action Action
+		if json.Unmarshal(msg, &action) == nil {
+			game.processAction(action, player)
+		}
 	}
+}
+
+func setupGameConnection(conn *websocket.Conn, c *gin.Context) (game *Game, player string, err error) {
+	player = c.Request.URL.Query().Get("player")
+	rawGameId := c.Request.URL.Query().Get("gameId")
+	gameId, err := uuid.Parse(rawGameId)
+
+	if (player != "1" && player != "2") || err != nil {
+		conn.WriteMessage(websocket.TextMessage, []byte(`{"error":true}`))
+		conn.Close()
+		return
+	}
+
+	game = getGame(gameId)
+
+	if player == "1" {
+		game.PlayerOneConn = conn
+	} else {
+		game.PlayerTwoConn = conn
+	}
+
+	table, gotTable := tables[gameId]
+	if gotTable && player == "2" {
+		table.Conn.WriteMessage(websocket.TextMessage, []byte(`{"gameId":"`+rawGameId+`"}`))
+	}
+
+	return game, player, err
+}
+
+func closeConnections(game *Game) {
+	if game.PlayerOneConn != nil {
+		game.PlayerOneConn.WriteMessage(websocket.TextMessage, []byte(`{"error":true}`))
+		game.PlayerOneConn.Close()
+	}
+	if game.PlayerTwoConn != nil {
+		game.PlayerTwoConn.WriteMessage(websocket.TextMessage, []byte(`{"error":true}`))
+		game.PlayerOneConn.Close()
+	}
+
+	delete(games, game.Id)
 }

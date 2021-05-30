@@ -67,6 +67,7 @@ func (g *GameState) getPlayerInfo(player string) PlayerStateView {
 	p := g.PlayerOne
 	o := g.PlayerTwo
 	turn := g.PlayerOneTurn
+
 	if player == "2" {
 		p = g.PlayerTwo
 		o = g.PlayerOne
