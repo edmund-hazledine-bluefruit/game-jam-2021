@@ -28,7 +28,23 @@
         }
 
         if (msg.gameEnded) {
-            console.log("GAME HAS ENDDED")
+            if (player == "1") {
+                myScore = msg.playerOneScore
+                theirScore = msg.playerTwoScore
+            }
+            else {
+                myScore = msg.playerTwoScore
+                theirScore = msg.playerOneScore
+            }
+
+            if (myScore > theirScore ) 
+                alert(`You Win! \n Your Score: ${myScore} +\n Their Score: ${theirScore}`)
+            if (myScore < theirScore ) 
+                alert(`You lose! \n Your Score: ${myScore} +\n Their Score: ${theirScore}`)
+            if (myScore == theirScore ) 
+                alert("Draw! \n Score: " + myScore)
+
+            window.location.href = "/";
         }
 
         updateGameState (msg)

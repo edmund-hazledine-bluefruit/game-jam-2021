@@ -11,6 +11,12 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type GameEndedMsg struct {
+	GameEnded      bool `json:"gameEnded"`
+	PlayerOneScore int  `json:"playerOneScore"`
+	PlayerTwoScore int  `json:"playerTwoScore"`
+}
+
 type Action struct {
 	ActionType int `json:"actionType"`
 	CardId     int `json:"cardId"`
@@ -22,6 +28,7 @@ type Game struct {
 	GameState     GameState
 	PlayerOneConn *websocket.Conn
 	PlayerTwoConn *websocket.Conn
+	Ended         bool
 }
 
 var games map[uuid.UUID]*Game = make(map[uuid.UUID]*Game)
@@ -83,7 +90,13 @@ func (game *Game) gameEnded() (ended bool) {
 	}
 
 	if count >= 1 {
-		closeConnections(game, `{"gameEnded":true}`)
+		msg := GameEndedMsg{
+			GameEnded:      true,
+			PlayerOneScore: game.GameState.PlayerOne.Score,
+			PlayerTwoScore: game.GameState.PlayerTwo.Score,
+		}
+		jsonMsg, _ := json.Marshal(msg)
+		closeConnections(game, jsonMsg)
 		return true
 	}
 	return false
@@ -149,8 +162,8 @@ func gameSock(c *gin.Context) {
 
 	for {
 		_, msg, err := conn.ReadMessage()
-		if err != nil {
-			closeConnections(game, `{"error":true}`)
+		if err != nil && !game.Ended {
+			closeConnections(game, []byte(`{"error":true}`))
 			break
 		}
 		var action Action
@@ -187,13 +200,15 @@ func setupGameConnection(conn *websocket.Conn, c *gin.Context) (game *Game, play
 	return game, player, err
 }
 
-func closeConnections(game *Game, msg string) {
+func closeConnections(game *Game, msg []byte) {
+	game.Ended = true
+
 	if game.PlayerOneConn != nil {
-		game.PlayerOneConn.WriteMessage(websocket.TextMessage, []byte(msg))
+		game.PlayerOneConn.WriteMessage(websocket.TextMessage, msg)
 	}
 
 	if game.PlayerTwoConn != nil {
-		game.PlayerTwoConn.WriteMessage(websocket.TextMessage, []byte(msg))
+		game.PlayerTwoConn.WriteMessage(websocket.TextMessage, msg)
 	}
 
 	if game.PlayerOneConn != nil {
