@@ -10,13 +10,11 @@ func main() {
 	fmt.Println("Starting Server...")
 
 	router := gin.Default()
-	router.StaticFile("/", "./static/home.html")
+	router.StaticFile("/play", "./static/home.html")
 	router.Static("/static", "./static/")
 	router.LoadHTMLGlob("templates/*")
-
-	router.GET("/welcome", handleWelcome)
+	router.GET("/", handleWelcome)
 	router.GET("/wait-for-table", waitForTable)
-	router.GET("/play", createGame)
 	router.GET("/gamesocket", gameSock)
 
 	router.Run()

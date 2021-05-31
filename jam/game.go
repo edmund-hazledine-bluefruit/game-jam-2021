@@ -66,9 +66,15 @@ func (player *Player) buyCard(cardId int, gameState *GameState) {
 			player.Discard = append(player.Discard, supplyPile.Card)
 			gameState.BuyArea[i].Amount--
 		}
+
 		break
 	}
 }
+
+//func (game *Game) checkEndgame() {
+//	for i, supplyPile := range game.GameState.BuyArea {
+//	}
+//}
 
 func (player *Player) discardAndRedraw() {
 	player.Discard = append(player.Discard, player.Hand...)
@@ -92,10 +98,6 @@ func shuffle(cards []Card) (shuffledCards []Card) {
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(cards), func(i, j int) { cards[i], cards[j] = cards[j], cards[i] })
 	return cards
-}
-
-func createGame(c *gin.Context) {
-	c.File("static/home.html")
 }
 
 func getGame(gameId uuid.UUID) (game *Game) {

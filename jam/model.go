@@ -12,7 +12,7 @@ type PlayerStateView struct {
 	Player     PlayerInfo   `json:"player"`
 	Opponent   OpponentInfo `json:"opponent"`
 	BuyArea    []SupplyPile `json:"buyArea"`
-	LastPlayed Card         `json:"lastPlayed`
+	LastPlayed Card         `json:"lastPlayed"`
 }
 
 type PlayerInfo struct {
@@ -35,7 +35,7 @@ type GameState struct {
 	PlayerOne     Player       `json:"playerOne"`
 	PlayerTwo     Player       `json:"playerTwo"`
 	BuyArea       []SupplyPile `json:"buyArea"`
-	LastPlayed    Card         `json:"lastPlayed`
+	LastPlayed    Card         `json:"lastPlayed"`
 }
 
 type Player struct {
