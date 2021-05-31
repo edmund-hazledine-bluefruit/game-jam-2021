@@ -73,7 +73,7 @@
 
 <script id="entry-template" type="text/x-handlebars-template">
   <div class="top-row">
-    <div class="top-left">
+    <div>
       <div class="opponent">
         <h3>Opponent</h3>
         <div class="opponent_deck card_back">
@@ -92,7 +92,7 @@
         </div>
       </div>
 
-      {{#if lastPlayed}}
+      {{#if lastPlayed.id}}
       <div class="card">
         <p class="card_title">{{lastPlayed.name}}</p>
 
@@ -115,63 +115,69 @@
       {{/if}}
     </div>
 
-    <div class="top-left">
-    <div class="cards">
-      <h3>Buys</h3>
-      {{#each buyArea}}
-      {{#if amount}}
-      {{#if ../playerTurn}}
-      {{#unless ../player.actions}}
-      <div class="card card_select" onclick="buyCard({{card.id}})">
-      {{else}}
-      <div class="card">
-      {{/unless}}
-      {{/if}}
-        <div class="card_amount">
-          {{amount}}
-        </div>
-        <p class="card_title">{{card.name}}</p>
+    <div>
+      <div>
+        <div class="cards">
+          <h3>Buys</h3>
+          {{#each buyArea}}
 
-        <img class="card_image fancy-border {{#if card.blue}}blue_image{{/if}}" src="/static/images/{{card.image}}">
+          {{#if amount}}
 
-        <p class="card_text">{{card.description}}</p>
+          {{#unless ../player.actions}}
+          {{#if ../playerTurn}}
+          <div class="card card_select" onclick="buyCard({{card.id}})">
+          {{else}}
+          <div class="card">
+          {{/if}}
+          {{/unless}}
 
-        <div class="card_effects">
-          <div>
-            ⚔️{{card.effects.attack}}
+            <div class="card_amount">
+              {{amount}}
+            </div>
+            <p class="card_title">{{card.name}}</p>
+
+            <img class="card_image fancy-border {{#if card.blue}}blue_image{{/if}}" src="/static/images/{{card.image}}">
+
+            <p class="card_text">{{card.description}}</p>
+
+            <div class="card_effects">
+              <div>
+                ⚔️{{card.effects.attack}}
+              </div>
+              <div>
+                ▶️{{card.effects.actions}}
+              </div>
+              <div>
+                🃏{{card.effects.cards}}
+              </div>
+            </div>
           </div>
-          <div>
-            ▶️{{card.effects.actions}}
-          </div>
-          <div>
-            🃏{{card.effects.cards}}
-          </div>
+
+          {{else}}
+          <div class="card card_empty">
+            <div class="card_amount">
+              {{amount}}
+            </div>
+            <h1 class="card_empty_cross">⤬</h1>
+            <p>Empty Pile</p>
+          </div>  
+          {{/if}}
+
+          {{/each}}
         </div>
       </div>
-      {{else}}
-      <div class="card card_empty">
-        <div class="card_amount">
-          {{amount}}
-        </div>
-        <h1 class="card_empty_cross">⤬</h1>
-        
-        <p>Empty Pile</p>
-        
-      </div>  
-      {{/if}}
-      {{/each}}
-    </div>
-    <div class="info">
-      {{#if playerTurn}}
-      {{#if player.actions}}
-      Your turn! You have <span class="number">{{player.actions}}</span> action(s).
-      {{else}}
-      Your turn! You have <span class="number">1</span> buy.
-      {{/if}}
-      {{else}}
-      Wait your turn...
-      {{/if}}
-    </div>
+
+      <div class="info">
+        {{#if playerTurn}}
+        {{#if player.actions}}
+        Your turn! You have <span class="number">{{player.actions}}</span> action(s).
+        {{else}}
+        Your turn! You have <span class="number">1</span> buy.
+        {{/if}}
+        {{else}}
+        Wait your turn...
+        {{/if}}
+      </div>
     </div>
   </div>
 
@@ -193,12 +199,12 @@
           </div>
         </div>
         {{#each player.hand}}
-        {{#if ../playerTurn}}
         {{#if ../player.actions}}
+        {{#if ../playerTurn}}
         <div class="card card_select" onclick="useCard({{card.id}})">
+        {{/if}}
         {{else}}
         <div class="card">
-        {{/if}}
         {{/if}}
           <p class="card_title">{{name}}</p>
 
