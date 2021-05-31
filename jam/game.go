@@ -31,30 +31,39 @@ type Game struct {
 	Ended         bool
 }
 
+const (
+	UseCard = iota
+	BuyCard
+	EndActions
+)
+
 var games map[uuid.UUID]*Game = make(map[uuid.UUID]*Game)
 
 func (game *Game) processAction(action Action, playerId string) {
 	var player *Player
-	//var opponent *Player
+	var opponent *Player
 
 	if playerId == "1" {
 		player = &game.GameState.PlayerOne
-		//opponent = &game.GameState.PlayerTwo
+		opponent = &game.GameState.PlayerTwo
 	} else {
 		player = &game.GameState.PlayerTwo
-		//opponent = &game.GameState.PlayerOne
+		opponent = &game.GameState.PlayerOne
 	}
 
 	switch action.ActionType {
-	case 0: // Use Card
-		fmt.Println("Used card")
-	case 1: // Buy Card
+	case UseCard:
+		player.playActionCard(action.CardId, opponent, &game.GameState)
+	case EndActions:
+		player.Actions = 0
+	case BuyCard:
 		player.buyCard(action.CardId, &game.GameState)
 		player.discardAndRedraw()
 		if game.gameEnded() {
 			return
 		}
 		game.GameState.PlayerOneTurn = !game.GameState.PlayerOneTurn
+		player.Actions = 1
 	}
 
 	playerOneInfo := game.GameState.getPlayerInfo("1")
@@ -64,6 +73,12 @@ func (game *Game) processAction(action Action, playerId string) {
 
 	game.PlayerOneConn.WriteMessage(websocket.TextMessage, playerOneMsg)
 	game.PlayerTwoConn.WriteMessage(websocket.TextMessage, playerTwoMsg)
+}
+
+func (player *Player) playActionCard(cardId int, opponent *Player, gameState *GameState) {
+	card := cards[cardId]
+	fmt.Println("Got Card", card.Name)
+	player.Actions--
 }
 
 func (player *Player) buyCard(cardId int, gameState *GameState) {

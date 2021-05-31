@@ -22,7 +22,6 @@
 
     socket.onmessage = function (event) {
         let msg = JSON.parse(event.data)
-        console.log(msg)
         if (msg.error) {
             window.location.href = "/";
         }
@@ -57,7 +56,12 @@
       document.getElementById('content').innerHTML = html;
 
       document.getElementById('end-actions').onclick = () => {
-        // send an action -> player actions to 0
+        socket.send(
+          `{
+              "actionType": 2,
+              "cardId": -1,
+              "usedWith": -1
+          }`)
       };
     };
 
@@ -150,7 +154,10 @@
           {{else}}
           <div class="card">
           {{/if}}
+          {{else}}
+          <div class="card">
           {{/unless}}
+
 
             <div class="card_amount">
               {{amount}}
@@ -222,7 +229,9 @@
         {{#each player.hand}}
         {{#if ../player.actions}}
         {{#if ../playerTurn}}
-        <div class="card card_select" onclick="useCard({{card.id}})">
+        <div class="card card_select" onclick="useCard({{id}})">
+        {{else}}
+        <div class="card">
         {{/if}}
         {{else}}
         <div class="card">
@@ -241,7 +250,15 @@
         </div>
         {{/each}}
         <div>
+          {{#if player.actions}}
+          {{#if playerTurn}}
           <button id="end-actions" class="end-actions">End actions</button>
+          {{else}}
+          <button id="end-actions" class="end-actions-disabled" disabled>End actions</button>
+          {{/if}}
+          {{else}}
+          <button id="end-actions" class="end-actions-disabled" disabled>End actions</button>
+          {{/if}}
         </div>
   </div>
 </script>

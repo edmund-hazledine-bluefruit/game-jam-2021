@@ -7,6 +7,87 @@ import (
 //go:embed static/state_default.json
 var gameStateJson []byte
 
+var cards = map[int]Card{
+	1: Card{
+		Id:          1,
+		Name:        "Orange",
+		Image:       "orange.jpg",
+		Description: "But it's not orange! :o (Special: Draw card - if card is blue, play it)",
+		Blue:        true,
+		Special:     true,
+		Effects: Effects{
+			Attack:  0,
+			Actions: 1,
+			Cards:   1,
+		},
+	},
+	2: Card{
+		Id:          2,
+		Name:        "Apple",
+		Image:       "apple.jpg",
+		Description: "It's just an apple.",
+		Blue:        false,
+		Special:     false,
+		Effects: Effects{
+			Attack:  1,
+			Actions: 1,
+			Cards:   1,
+		},
+	},
+	3: Card{
+		Id:          3,
+		Name:        "Banana",
+		Image:       "banana.jpg",
+		Description: "This is not a gun.",
+		Blue:        true,
+		Special:     false,
+		Effects: Effects{
+			Attack:  2,
+			Actions: 0,
+			Cards:   1,
+		},
+	},
+	4: Card{
+		Id:          4,
+		Name:        "Melon",
+		Image:       "melon.jpg",
+		Description: "Throw this for maximum effect.",
+		Blue:        true,
+		Special:     false,
+		Effects: Effects{
+			Attack:  3,
+			Actions: 0,
+			Cards:   0,
+		},
+	},
+	5: Card{
+		Id:          5,
+		Name:        "Lime",
+		Image:       "lime.jpg",
+		Description: "An evil sour lime. Make someone else bite it. (Special: Play alongisde a blue card - Adds +1 (or +2 randomly?) to a random effect)",
+		Blue:        false,
+		Special:     true,
+		Effects: Effects{
+			Attack:  0,
+			Actions: 0,
+			Cards:   0,
+		},
+	},
+	6: Card{
+		Id:          6,
+		Name:        "Rotten Fruit",
+		Image:       "rotten.jpg",
+		Description: "Ugh, stinky.",
+		Blue:        false,
+		Special:     false,
+		Effects: Effects{
+			Attack:  0,
+			Actions: 0,
+			Cards:   0,
+		},
+	},
+}
+
 type PlayerStateView struct {
 	PlayerTurn bool         `json:"playerTurn"`
 	Player     PlayerInfo   `json:"player"`
