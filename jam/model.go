@@ -12,6 +12,7 @@ type PlayerStateView struct {
 	Player     PlayerInfo   `json:"player"`
 	Opponent   OpponentInfo `json:"opponent"`
 	BuyArea    []SupplyPile `json:"buyArea"`
+	LastPlayed Card         `json:"lastPlayed`
 }
 
 type PlayerInfo struct {
@@ -19,6 +20,7 @@ type PlayerInfo struct {
 	Deck    int    `json:"deck"`
 	Discard int    `json:"discard"`
 	Score   int    `json:"score"`
+	Actions int    `json:"actions"`
 }
 
 type OpponentInfo struct {
@@ -33,6 +35,7 @@ type GameState struct {
 	PlayerOne     Player       `json:"playerOne"`
 	PlayerTwo     Player       `json:"playerTwo"`
 	BuyArea       []SupplyPile `json:"buyArea"`
+	LastPlayed    Card         `json:"lastPlayed`
 }
 
 type Player struct {
@@ -40,6 +43,7 @@ type Player struct {
 	Deck    []Card `json:"deck"`
 	Discard []Card `json:"discard"`
 	Score   int    `json:"score"`
+	Actions int    `json:"actions"`
 }
 
 type SupplyPile struct {
@@ -79,6 +83,7 @@ func (g *GameState) getPlayerInfo(player string) PlayerStateView {
 		Deck:    len(p.Deck),
 		Discard: len(p.Discard),
 		Score:   p.Score,
+		Actions: p.Actions,
 	}
 
 	opponentInfo := OpponentInfo{
@@ -93,5 +98,6 @@ func (g *GameState) getPlayerInfo(player string) PlayerStateView {
 		Player:     playerInfo,
 		Opponent:   opponentInfo,
 		BuyArea:    g.BuyArea,
+		LastPlayed: g.LastPlayed,
 	}
 }

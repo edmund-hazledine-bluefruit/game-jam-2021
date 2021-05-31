@@ -70,6 +70,7 @@
         ],
         "deck": [],
         "discard": [],
+        "actions": 0,
         "score": 0
     },
     "playerTwo": {
@@ -142,6 +143,7 @@
         ],
         "deck": [],
         "discard": [],
+        "actions": 0,
         "score": 0
     },
     "buyArea": [

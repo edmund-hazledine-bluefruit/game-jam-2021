@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -40,7 +42,9 @@ func (game *Game) processAction(action Action, playerId string) {
 	case 0: // Use Card
 		fmt.Println("Used card")
 	case 1: // Buy Card
-		buyCard(action.CardId, player, &game.GameState)
+		player.buyCard(action.CardId, &game.GameState)
+		player.discardAndRedraw()
+		game.GameState.PlayerOneTurn = !game.GameState.PlayerOneTurn
 	}
 
 	playerOneInfo := game.GameState.getPlayerInfo("1")
@@ -52,14 +56,42 @@ func (game *Game) processAction(action Action, playerId string) {
 	game.PlayerTwoConn.WriteMessage(websocket.TextMessage, playerTwoMsg)
 }
 
-func buyCard(cardId int, player *Player, gameState *GameState) {
+func (player *Player) buyCard(cardId int, gameState *GameState) {
 	for i, supplyPile := range gameState.BuyArea {
-		if supplyPile.Card.Id == cardId {
+		if supplyPile.Card.Id != cardId {
+			continue
+		}
+
+		if supplyPile.Amount > 0 {
 			player.Discard = append(player.Discard, supplyPile.Card)
 			gameState.BuyArea[i].Amount--
-			break
 		}
+		break
 	}
+}
+
+func (player *Player) discardAndRedraw() {
+	player.Discard = append(player.Discard, player.Hand...)
+
+	if len(player.Deck) >= 5 {
+		player.Hand = player.Deck[:5]
+		player.Deck = player.Deck[5:]
+		return
+	}
+
+	player.Hand = player.Deck
+	player.Deck = shuffle(player.Discard)
+	player.Discard = make([]Card, 0, 10)
+
+	draw := 5 - len(player.Hand)
+	player.Hand = append(player.Hand, player.Deck[:draw]...)
+	player.Deck = player.Deck[draw:]
+}
+
+func shuffle(cards []Card) (shuffledCards []Card) {
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(cards), func(i, j int) { cards[i], cards[j] = cards[j], cards[i] })
+	return cards
 }
 
 func createGame(c *gin.Context) {
