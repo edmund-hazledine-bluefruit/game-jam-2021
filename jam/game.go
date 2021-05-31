@@ -44,6 +44,9 @@ func (game *Game) processAction(action Action, playerId string) {
 	case 1: // Buy Card
 		player.buyCard(action.CardId, &game.GameState)
 		player.discardAndRedraw()
+		if game.gameEnded() {
+			return
+		}
 		game.GameState.PlayerOneTurn = !game.GameState.PlayerOneTurn
 	}
 
@@ -71,10 +74,20 @@ func (player *Player) buyCard(cardId int, gameState *GameState) {
 	}
 }
 
-//func (game *Game) checkEndgame() {
-//	for i, supplyPile := range game.GameState.BuyArea {
-//	}
-//}
+func (game *Game) gameEnded() (ended bool) {
+	count := 0
+	for _, supplyPile := range game.GameState.BuyArea {
+		if supplyPile.Amount < 1 {
+			count++
+		}
+	}
+
+	if count >= 1 {
+		closeConnections(game, `{"gameEnded":true}`)
+		return true
+	}
+	return false
+}
 
 func (player *Player) discardAndRedraw() {
 	player.Discard = append(player.Discard, player.Hand...)
@@ -137,7 +150,7 @@ func gameSock(c *gin.Context) {
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			closeConnections(game)
+			closeConnections(game, `{"error":true}`)
 			break
 		}
 		var action Action
@@ -174,14 +187,23 @@ func setupGameConnection(conn *websocket.Conn, c *gin.Context) (game *Game, play
 	return game, player, err
 }
 
-func closeConnections(game *Game) {
+func closeConnections(game *Game, msg string) {
 	if game.PlayerOneConn != nil {
-		game.PlayerOneConn.WriteMessage(websocket.TextMessage, []byte(`{"error":true}`))
-		game.PlayerOneConn.Close()
+		game.PlayerOneConn.WriteMessage(websocket.TextMessage, []byte(msg))
 	}
+
 	if game.PlayerTwoConn != nil {
-		game.PlayerTwoConn.WriteMessage(websocket.TextMessage, []byte(`{"error":true}`))
+		game.PlayerTwoConn.WriteMessage(websocket.TextMessage, []byte(msg))
+	}
+
+	if game.PlayerOneConn != nil {
 		game.PlayerOneConn.Close()
+		game.PlayerOneConn = nil
+	}
+
+	if game.PlayerTwoConn != nil {
+		game.PlayerTwoConn.Close()
+		game.PlayerTwoConn = nil
 	}
 
 	delete(games, game.Id)

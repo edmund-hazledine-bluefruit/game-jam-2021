@@ -22,8 +22,13 @@
 
     socket.onmessage = function (event) {
         let msg = JSON.parse(event.data)
+        console.log(msg)
         if (msg.error) {
-            window.location.href = "/welcome";
+            window.location.href = "/";
+        }
+
+        if (msg.gameEnded) {
+            console.log("GAME HAS ENDDED")
         }
 
         updateGameState (msg)
