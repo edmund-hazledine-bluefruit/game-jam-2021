@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -34,6 +35,7 @@ type Game struct {
 
 const (
 	OrangeCardId = 1
+	LimeCardId   = 5
 )
 
 const (
@@ -58,7 +60,7 @@ func (game *Game) processAction(action Action, playerId string) {
 
 	switch action.ActionType {
 	case UseCard:
-		player.playActionCard(action.CardId, opponent, &game.GameState)
+		player.playActionCard(action.CardId, opponent, &game.GameState, action)
 	case EndActions:
 		player.Actions = 0
 	case BuyCard:
@@ -81,7 +83,7 @@ func (game *Game) processAction(action Action, playerId string) {
 	game.GameState.Info = ""
 }
 
-func (player *Player) playActionCard(cardId int, opponent *Player, gameState *GameState) {
+func (player *Player) playActionCard(cardId int, opponent *Player, gameState *GameState, action Action) {
 	card := cards[cardId]
 	gameState.LastPlayed = card
 	opponent.Score -= card.Effects.Attack
@@ -91,14 +93,14 @@ func (player *Player) playActionCard(cardId int, opponent *Player, gameState *Ga
 	}
 
 	if card.Special {
-		player.handleSpecialCard(card, opponent, gameState)
+		player.handleSpecialCard(card, opponent, gameState, action)
 	}
 
 	player.removeCardFromHand(cardId)
 	player.Actions--
 }
 
-func (player *Player) handleSpecialCard(card Card, opponent *Player, gameState *GameState) {
+func (player *Player) handleSpecialCard(card Card, opponent *Player, gameState *GameState, action Action) {
 	playerName := "Player 1"
 	if !gameState.PlayerOneTurn {
 		playerName = "Player 2"
@@ -106,18 +108,56 @@ func (player *Player) handleSpecialCard(card Card, opponent *Player, gameState *
 
 	switch card.Id {
 	case OrangeCardId:
-		newCard, err := player.drawCard()
-		if err != nil {
-			gameState.Info = playerName + " played an Orange but there's no cards left to draw"
-			return
-		}
+		player.playOrangeCard(playerName, opponent, gameState)
+	case LimeCardId:
+		player.playLimeCard(playerName, opponent, gameState, action)
+	}
+}
 
-		if newCard.Blue {
-			gameState.Info = playerName + " uses an Orange, they draw and play a " + newCard.Name
-			player.playActionCard(newCard.Id, opponent, gameState)
-		} else {
-			gameState.Info = playerName + " played an Orange and draws a " + newCard.Name + " better luck next time!"
+func (player *Player) playLimeCard(playerName string, opponent *Player, gameState *GameState, action Action) {
+	blueCard := cards[action.UsedWith]
+	if !blueCard.Blue {
+		gameState.Info = playerName + " played a Lime with a " + blueCard.Name + ", it had no effect."
+		return
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	bonus := rand.Intn(2) + 1
+	effect := rand.Intn(3)
+
+	switch effect {
+	case 0:
+		gameState.Info = playerName + " played a Lime with a " +
+			blueCard.Name + ". Adding +" + strconv.Itoa(bonus) + " attack"
+		opponent.Score -= bonus
+	case 1:
+		gameState.Info = playerName + " played a Lime with a " +
+			blueCard.Name + ". Adding +" + strconv.Itoa(bonus) + " actions"
+		player.Actions += bonus
+	case 2:
+		gameState.Info = playerName + " played a Lime with a " +
+			blueCard.Name + ". Adding +" + strconv.Itoa(bonus) + " card draw"
+		for i := 0; i < bonus; i++ {
+			player.drawCard()
 		}
+	}
+
+	player.Actions++
+	player.playActionCard(blueCard.Id, player, gameState, action)
+}
+
+func (player *Player) playOrangeCard(playerName string, opponent *Player, gameState *GameState) {
+	newCard, err := player.drawCard()
+	if err != nil {
+		gameState.Info = playerName + " played an Orange but there's no cards left to draw"
+		return
+	}
+
+	if newCard.Blue {
+		gameState.Info = playerName + " uses an Orange, they draw and play a " + newCard.Name
+		player.playActionCard(newCard.Id, opponent, gameState, Action{})
+	} else {
+		gameState.Info = playerName + " played an Orange and draws a " + newCard.Name + " better luck next time!"
 	}
 }
 

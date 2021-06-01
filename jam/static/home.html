@@ -65,19 +65,33 @@
       };
     };
 
+    var waitingForLime = false;
     function useCard(id) {
-        // send action:
+        if (waitingForLime) {
+            waitingForLime = false;
+            socket.send(
+              `{
+                  "actionType": 0,
+                  "cardId": 5,
+                  "usedWith": ${id}
+              }`)
+            return
+        }
+
+        if (id == 5) {
+            if (document.getElementsByClassName("blue-card-in-hand").length > 0) {
+                document.getElementById("game-info").innerHTML = "You played a lime! Pick a blue card."
+                waitingForLime = true;
+                return
+            }
+        }
+
         socket.send(
           `{
               "actionType": 0,
               "cardId": ${id},
               "usedWith": -1
           }`)
-
-        // player uses card
-        // player actions -1 
-        // player actions += any on card
-        // other player score - attack on card
     }
 
     function buyCard(id) {
@@ -87,11 +101,6 @@
               "cardId": ${id},
               "usedWith": -1
           }`)
-
-        // send action:
-        // player buys card
-        // turn ends
-        // card amount -1
     }
   </script>
 </head>
@@ -205,9 +214,7 @@
         {{else}}
         Wait your turn...
         {{/if}}
-        {{#if info}}
-        <p class="game-info">{{info}}</p>
-        {{/if}}
+        <p class="game-info" id="game-info">{{info}}</p>
       </div>
     </div>
   </div>
@@ -241,7 +248,7 @@
         {{/if}}
           <p class="card_title">{{name}}</p>
 
-          <img class="card_image fancy-border {{#if blue}}blue_image{{/if}}" src="/static/images/{{image}}">
+          <img class="card_image fancy-border {{#if blue}}blue_image blue-card-in-hand{{/if}}" src="/static/images/{{image}}">
 
           <p class="card_text">{{description}}</p>
 

@@ -64,7 +64,7 @@ var cards = map[int]Card{
 		Id:          5,
 		Name:        "Lime",
 		Image:       "lime.jpg",
-		Description: "An evil sour lime. Make someone else bite it. (Special: Play alongisde a blue card - Adds +1 (or +2 randomly?) to a random effect)",
+		Description: "An evil sour lime. Make someone else bite it. (Special: Play alongisde a blue card - Adds +1 or +2 randomly to a random effect)",
 		Blue:        false,
 		Special:     true,
 		Effects: Effects{

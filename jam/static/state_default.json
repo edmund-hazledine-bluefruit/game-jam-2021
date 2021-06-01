@@ -219,7 +219,7 @@
                 "id": 5,
                 "name": "Lime",
                 "image": "lime.jpg",
-                "description": "An evil sour lime. Make someone else bite it. (Special: Play alongisde a blue card - Adds +1 (or +2 randomly?) to a random effect)",
+                "description": "An evil sour lime. Make someone else bite it. (Special: Play alongisde a blue card - Adds +1 or +2 randomly to a random effect)",
                 "blue": false,
                 "special": true,
                 "effects": {
