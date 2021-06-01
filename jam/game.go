@@ -78,6 +78,7 @@ func (game *Game) processAction(action Action, playerId string) {
 
 	game.PlayerOneConn.WriteMessage(websocket.TextMessage, playerOneMsg)
 	game.PlayerTwoConn.WriteMessage(websocket.TextMessage, playerTwoMsg)
+	game.GameState.Info = ""
 }
 
 func (player *Player) playActionCard(cardId int, opponent *Player, gameState *GameState) {
@@ -98,11 +99,24 @@ func (player *Player) playActionCard(cardId int, opponent *Player, gameState *Ga
 }
 
 func (player *Player) handleSpecialCard(card Card, opponent *Player, gameState *GameState) {
+	playerName := "Player 1"
+	if !gameState.PlayerOneTurn {
+		playerName = "Player 2"
+	}
+
 	switch card.Id {
 	case OrangeCardId:
 		newCard, err := player.drawCard()
-		if err == nil && newCard.Blue {
+		if err != nil {
+			gameState.Info = playerName + " played an Orange but there's no cards left to draw"
+			return
+		}
+
+		if newCard.Blue {
+			gameState.Info = playerName + " uses an Orange, they draw and play a " + newCard.Name
 			player.playActionCard(newCard.Id, opponent, gameState)
+		} else {
+			gameState.Info = playerName + " played an Orange and draws a " + newCard.Name + " better luck next time!"
 		}
 	}
 }
@@ -177,7 +191,7 @@ func (game *Game) gameEnded() (ended bool) {
 		}
 	}
 
-	if count >= 1 {
+	if count >= 3 {
 		msg := GameEndedMsg{
 			GameEnded:      true,
 			PlayerOneScore: game.GameState.PlayerOne.Score,

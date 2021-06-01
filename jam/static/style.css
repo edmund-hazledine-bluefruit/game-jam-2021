@@ -267,3 +267,10 @@ input {
     color: #00000099;
     border: 1px solid gray;
 }
+
+.game-info {
+    margin: 0;
+    margin-top: 20px;
+    padding: 0;
+    color: #2c6aa0;
+}
