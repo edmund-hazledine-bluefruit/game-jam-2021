@@ -82,6 +82,7 @@ func (game *Game) processAction(action Action, playerId string) {
 
 func (player *Player) playActionCard(cardId int, opponent *Player, gameState *GameState) {
 	card := cards[cardId]
+	gameState.LastPlayed = card
 	opponent.Score -= card.Effects.Attack
 	player.Actions += card.Effects.Actions
 	for i := 0; i < card.Effects.Cards; i++ {
