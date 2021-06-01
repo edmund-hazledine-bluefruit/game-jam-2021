@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -30,6 +31,10 @@ type Game struct {
 	PlayerTwoConn *websocket.Conn
 	Ended         bool
 }
+
+const (
+	OrangeCardId = 1
+)
 
 const (
 	UseCard = iota
@@ -77,8 +82,38 @@ func (game *Game) processAction(action Action, playerId string) {
 
 func (player *Player) playActionCard(cardId int, opponent *Player, gameState *GameState) {
 	card := cards[cardId]
-	fmt.Println("Got Card", card.Name)
+	opponent.Score -= card.Effects.Attack
+	player.Actions += card.Effects.Actions
+	for i := 0; i < card.Effects.Cards; i++ {
+		player.drawCard()
+	}
+
+	if card.Special {
+		player.handleSpecialCard(card, opponent, gameState)
+	}
+
+	player.removeCardFromHand(cardId)
 	player.Actions--
+}
+
+func (player *Player) handleSpecialCard(card Card, opponent *Player, gameState *GameState) {
+	switch card.Id {
+	case OrangeCardId:
+		newCard, err := player.drawCard()
+		if err == nil && newCard.Blue {
+			player.playActionCard(newCard.Id, opponent, gameState)
+		}
+	}
+}
+
+func (player *Player) removeCardFromHand(cardId int) {
+	for i, card := range player.Hand {
+		if card.Id == cardId {
+			player.Hand = append(player.Hand[:i], player.Hand[i+1:]...)
+			player.PlayArea = append(player.PlayArea, card)
+			return
+		}
+	}
 }
 
 func (player *Player) buyCard(cardId int, gameState *GameState) {
@@ -94,6 +129,43 @@ func (player *Player) buyCard(cardId int, gameState *GameState) {
 
 		break
 	}
+}
+
+func (player *Player) drawCard() (card Card, err error) {
+	if len(player.Deck) < 1 {
+		player.Deck = shuffle(player.Discard)
+		player.Discard = make([]Card, 0, 10)
+	}
+
+	if len(player.Deck) < 1 {
+		return card, errors.New("Failed to draw card")
+	}
+
+	player.Hand = append(player.Hand, player.Deck[:1]...)
+	player.Deck = player.Deck[1:]
+
+	return player.Hand[len(player.Hand)-1], err
+}
+
+func (player *Player) discardAndRedraw() {
+	player.Discard = append(player.Discard, player.PlayArea...)
+	player.PlayArea = make([]Card, 0, 10)
+
+	player.Discard = append(player.Discard, player.Hand...)
+
+	if len(player.Deck) >= 5 {
+		player.Hand = player.Deck[:5]
+		player.Deck = player.Deck[5:]
+		return
+	}
+
+	player.Hand = player.Deck
+	player.Deck = shuffle(player.Discard)
+	player.Discard = make([]Card, 0, 10)
+
+	draw := 5 - len(player.Hand)
+	player.Hand = append(player.Hand, player.Deck[:draw]...)
+	player.Deck = player.Deck[draw:]
 }
 
 func (game *Game) gameEnded() (ended bool) {
@@ -117,25 +189,10 @@ func (game *Game) gameEnded() (ended bool) {
 	return false
 }
 
-func (player *Player) discardAndRedraw() {
-	player.Discard = append(player.Discard, player.Hand...)
-
-	if len(player.Deck) >= 5 {
-		player.Hand = player.Deck[:5]
-		player.Deck = player.Deck[5:]
-		return
-	}
-
-	player.Hand = player.Deck
-	player.Deck = shuffle(player.Discard)
-	player.Discard = make([]Card, 0, 10)
-
-	draw := 5 - len(player.Hand)
-	player.Hand = append(player.Hand, player.Deck[:draw]...)
-	player.Deck = player.Deck[draw:]
-}
-
 func shuffle(cards []Card) (shuffledCards []Card) {
+	if len(cards) < 1 {
+		return cards
+	}
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(cards), func(i, j int) { cards[i], cards[j] = cards[j], cards[i] })
 	return cards

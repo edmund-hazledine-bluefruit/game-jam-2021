@@ -120,11 +120,12 @@ type GameState struct {
 }
 
 type Player struct {
-	Hand    []Card `json:"hand"`
-	Deck    []Card `json:"deck"`
-	Discard []Card `json:"discard"`
-	Score   int    `json:"score"`
-	Actions int    `json:"actions"`
+	Hand     []Card `json:"hand"`
+	Deck     []Card `json:"deck"`
+	Discard  []Card `json:"discard"`
+	PlayArea []Card `json:"playArea"`
+	Score    int    `json:"score"`
+	Actions  int    `json:"actions"`
 }
 
 type SupplyPile struct {
