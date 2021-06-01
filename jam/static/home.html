@@ -82,8 +82,10 @@
             if (document.getElementsByClassName("blue-card-in-hand").length > 0) {
                 document.getElementById("game-info").innerHTML = "You played a lime! Pick a blue card."
                 waitingForLime = true;
-                return
+            } else {
+                document.getElementById("game-info").innerHTML = "You don't have any blue cards in your hand :'("
             }
+            return
         }
 
         socket.send(
